@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_alignParentBottom="true"
+    android:background="#495055"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/StartButton"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:visibility="visible"
+        android:background="@drawable/start"
+        android:scaleType="centerCrop"
+        android:textAllCaps="true" />
+    <Button
+        android:id="@+id/nextbutton"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:visibility="invisible"
+        android:background="@drawable/next"
+        android:scaleType="centerCrop"
+        android:textAllCaps="true" />
+
+    <TextView
+        android:id="@+id/text_Timer"
+        android:layout_width="408dp"
+        android:layout_height="148dp"
+        android:gravity="center"
+        android:textColor="@color/colorPrimary"
+        android:textSize="80sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="3dp" />
+
+    <TextView
+        android:id="@+id/break-work"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="111dp"
+        android:text="@string/work_session"
+        android:textColor="@color/colorPrimary"
+        android:textSize="18sp" />
+
+
+</RelativeLayout>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    tools:context=".Open_Screen">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:paddingTop="16dp">
+
+        <ImageView
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="48dp"
+            android:layout_marginBottom="16dp"
+            app:srcCompat="@drawable/logo"
+            android:contentDescription="@string/todo" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="132dp"
+            android:text="@string/welcome"
+            android:textAllCaps="true"
+            android:textSize="16sp" />
+
+        <ProgressBar
+            android:id="@+id/progressBar1"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:indeterminate="true"
+            android:indeterminateTint="@color/colorPrimary"
+            android:indeterminateTintMode="src_atop"
+            android:progressDrawable="@android:color/black"
+            tools:targetApi="lollipop" />
+
+    </LinearLayout>
+
+</RelativeLayout>
