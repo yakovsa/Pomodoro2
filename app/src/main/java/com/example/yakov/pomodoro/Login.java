@@ -1,16 +1,15 @@
 package com.example.yakov.pomodoro;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -24,62 +23,58 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.concurrent.TimeUnit;
 
-//import com.google.firebase.quickstart.auth.R;
+public class Login extends AppCompatActivity implements
+    View.OnClickListener
 
-public class AuthActivity extends AppCompatActivity implements
-        View.OnClickListener{
+    {
 
-    private static final String TAG = "PhoneAuthActivity";
+        private static final String TAG = "PhoneAuthActivity";
 
-    private static final String KEY_VERIFY_IN_PROGRESS = "key_verify_in_progress";
+        private static final String KEY_VERIFY_IN_PROGRESS = "key_verify_in_progress";
 
-    private static final int STATE_INITIALIZED = 1;
-    private static final int STATE_CODE_SENT = 2;
-    private static final int STATE_VERIFY_FAILED = 3;
-    private static final int STATE_VERIFY_SUCCESS = 4;
-    private static final int STATE_SIGNIN_FAILED = 5;
-    private static final int STATE_SIGNIN_SUCCESS = 6;
+        private static final int STATE_INITIALIZED = 1;
+        private static final int STATE_CODE_SENT = 2;
+        private static final int STATE_VERIFY_FAILED = 3;
+        private static final int STATE_VERIFY_SUCCESS = 4;
+        private static final int STATE_SIGNIN_FAILED = 5;
+        private static final int STATE_SIGNIN_SUCCESS = 6;
 
-    private FirebaseAuth mAuth;
+        private FirebaseAuth mAuth;
 
-    private boolean mVerificationInProgress = false;
-    private String mVerificationId;
-    private PhoneAuthProvider.ForceResendingToken mResendToken;
-    private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
+        private boolean mVerificationInProgress = false;
+        private String mVerificationId;
+        private PhoneAuthProvider.ForceResendingToken mResendToken;
+        private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
 
-    private ViewGroup mPhoneNumberViews;
-    private ViewGroup mSignedInViews;
+        private ViewGroup mPhoneNumberViews;
+        private ViewGroup mSignedInViews;
 
-    private TextView mStatusText;
-    private TextView mDetailText;
+        private TextView mStatusText;
+        private TextView mDetailText;
 
-    private EditText mPhoneNumberField;
-    private EditText mVerificationField;
+        private EditText mPhoneNumberField;
+        private EditText mVerificationField;
 
-    private Button mStartButton;
-    private Button mVerifyButton;
-    private Button mResendButton;
-    private Button mSignOutButton;
-    //to write to database
-    private FirebaseDatabase Users;
-    private FirebaseDatabase userSesion;
-    private DatabaseReference dataBase;
-    private DatabaseReference ref;
+        private Button mStartButton;
+        private Button mVerifyButton;
+        private Button mResendButton;
+        private Button mSignOutButton;
+        //to write to database
+        private FirebaseDatabase Users;
+        private FirebaseDatabase userSesion;
+        private DatabaseReference dataBase;
+        private DatabaseReference ref;
 
-    private Button skip;
-
+        private Button skip;
 
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+        @Override
+        protected void onCreate (Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth);
 
@@ -88,13 +83,13 @@ public class AuthActivity extends AppCompatActivity implements
 
 
         skip.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(AuthActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                    }
-            });
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Login.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
 
         // Restore instance state
         if (savedInstanceState != null) {
@@ -110,8 +105,8 @@ public class AuthActivity extends AppCompatActivity implements
         mPhoneNumberField = findViewById(R.id.fieldPhoneNumber);
         mVerificationField = findViewById(R.id.fieldVerificationCode);
 
-        mStartButton = findViewById(R.id.buttonStartVerification);
-        mVerifyButton = findViewById(R.id.buttonVerifyPhone);
+        mStartButton = findViewById(R.id.buttonContinue);
+        mVerifyButton = findViewById(R.id.buttonSignIn);
         mResendButton = findViewById(R.id.buttonResend);
         mSignOutButton = findViewById(R.id.signOutButton);
 
@@ -129,7 +124,7 @@ public class AuthActivity extends AppCompatActivity implements
         // Initialize phone auth callbacks
         // [START phone_auth_callbacks]
 
-        mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks( ) {
+        mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
 
             @Override
             public void onVerificationCompleted(PhoneAuthCredential credential) {
@@ -150,7 +145,7 @@ public class AuthActivity extends AppCompatActivity implements
                 // [END_EXCLUDE]
                 signInWithPhoneAuthCredential(credential);
 
-                writeNewUser("u","u",mPhoneNumberField.getText().toString());
+                writeNewUser("u", "u", mPhoneNumberField.getText().toString());
 
             }
 
@@ -203,9 +198,9 @@ public class AuthActivity extends AppCompatActivity implements
         // [END phone_auth_callbacks]
     }
 
-    // [START on_start_check_user]
-    @Override
-    public void onStart() {
+        // [START on_start_check_user]
+        @Override
+        public void onStart () {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -217,22 +212,22 @@ public class AuthActivity extends AppCompatActivity implements
         }
         // [END_EXCLUDE]
     }
-    // [END on_start_check_user]
+        // [END on_start_check_user]
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
+        @Override
+        protected void onSaveInstanceState (Bundle outState){
         super.onSaveInstanceState(outState);
         outState.putBoolean(KEY_VERIFY_IN_PROGRESS, mVerificationInProgress);
     }
 
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        @Override
+        protected void onRestoreInstanceState (Bundle savedInstanceState){
         super.onRestoreInstanceState(savedInstanceState);
         mVerificationInProgress = savedInstanceState.getBoolean(KEY_VERIFY_IN_PROGRESS);
     }
 
 
-    private void startPhoneNumberVerification(String phoneNumber) {
+        private void startPhoneNumberVerification (String phoneNumber){
         // [START start_phone_auth]
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
                 phoneNumber,        // Phone number to verify
@@ -245,28 +240,28 @@ public class AuthActivity extends AppCompatActivity implements
         mVerificationInProgress = true;
     }
 
-    private void verifyPhoneNumberWithCode(String verificationId, String code) {
+        private void verifyPhoneNumberWithCode (String verificationId, String code){
         // [START verify_with_code]
         PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, code);
         // [END verify_with_code]
         signInWithPhoneAuthCredential(credential);
     }
 
-    // [START resend_verification]
-    private void resendVerificationCode(String phoneNumber,
-                                        PhoneAuthProvider.ForceResendingToken token) {
+        // [START resend_verification]
+        private void resendVerificationCode (String phoneNumber,
+            PhoneAuthProvider.ForceResendingToken token){
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
-                "972" +phoneNumber,        // Phone number to verify
+                "972" + phoneNumber,        // Phone number to verify
                 60,                 // Timeout duration
                 TimeUnit.SECONDS,   // Unit of timeout
                 this,               // Activity (for callback binding)
                 mCallbacks,         // OnVerificationStateChangedCallbacks
                 token);             // ForceResendingToken from callbacks
     }
-    // [END resend_verification]
+        // [END resend_verification]
 
-    // [START sign_in_with_phone]
-    private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
+        // [START sign_in_with_phone]
+        private void signInWithPhoneAuthCredential (PhoneAuthCredential credential){
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -296,18 +291,18 @@ public class AuthActivity extends AppCompatActivity implements
                     }
                 });
     }
-    // [END sign_in_with_phone]
+        // [END sign_in_with_phone]
 
-    private void signOut() {
+        private void signOut () {
         mAuth.signOut();
         updateUI(STATE_INITIALIZED);
     }
 
-    private void updateUI(int uiState) {
+        private void updateUI ( int uiState){
         updateUI(uiState, mAuth.getCurrentUser(), null);
     }
 
-    private void updateUI(FirebaseUser user) {
+        private void updateUI (FirebaseUser user){
         if (user != null) {
             updateUI(STATE_SIGNIN_SUCCESS, user);
         } else {
@@ -315,21 +310,23 @@ public class AuthActivity extends AppCompatActivity implements
         }
     }
 
-    private void updateUI(int uiState, FirebaseUser user) {
+        private void updateUI ( int uiState, FirebaseUser user){
         updateUI(uiState, user, null);
     }
 
-    private void updateUI(int uiState, PhoneAuthCredential cred) {
+        private void updateUI ( int uiState, PhoneAuthCredential cred){
         updateUI(uiState, null, cred);
     }
 
-    private void updateUI(int uiState, FirebaseUser user, PhoneAuthCredential cred) {
+        private void updateUI ( int uiState, FirebaseUser user, PhoneAuthCredential cred){
         switch (uiState) {
             case STATE_INITIALIZED:
                 // Initialized state, show only the phone number field and start button
-                enableViews(mStartButton, mPhoneNumberField);
-                disableViews(mVerifyButton, mResendButton, mVerificationField);
-                mDetailText.setText(null);
+                //enableViews(mStartButton, mPhoneNumberField);
+                //disableViews(mVerifyButton, mResendButton, mVerificationField);
+                //mDetailText.setText(null);
+                mStartButton.setVisibility(View.INVISIBLE);
+                mVerifyButton.setVisibility(View.VISIBLE);
                 break;
             case STATE_CODE_SENT:
                 // Code sent state, show the verification field, the
@@ -388,7 +385,7 @@ public class AuthActivity extends AppCompatActivity implements
         }
     }
 
-    private boolean validatePhoneNumber() {
+        private boolean validatePhoneNumber () {
         String phoneNumber = mPhoneNumberField.getText().toString();
         if (TextUtils.isEmpty(phoneNumber)) {
             mPhoneNumberField.setError("Invalid phone number.");
@@ -398,20 +395,20 @@ public class AuthActivity extends AppCompatActivity implements
         return true;
     }
 
-    private void enableViews(View... views) {
+        private void enableViews (View...views){
         for (View v : views) {
             v.setEnabled(true);
         }
     }
 
-    private void disableViews(View... views) {
+        private void disableViews (View...views){
         for (View v : views) {
             v.setEnabled(false);
         }
     }
 
-    @Override
-    public void onClick(View view) {
+        @Override
+        public void onClick (View view){
         switch (view.getId()) {
             case R.id.buttonStartVerification:
                 if (!validatePhoneNumber()) {
@@ -439,17 +436,16 @@ public class AuthActivity extends AppCompatActivity implements
     }
 
 
-    // [START basic_write]
-    private void writeNewUser(String userId, String name, String num_phone) {
+        // [START basic_write]
+        private void writeNewUser (String userId, String name, String num_phone){
         User user = new User(name, num_phone);
 
-        FirebaseDatabase.getInstance( ).setPersistenceEnabled(true);
-        dataBase = FirebaseDatabase.getInstance( ).getReference();
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        dataBase = FirebaseDatabase.getInstance().getReference();
 
         dataBase.child("users").child(userId).setValue(user);
     }
-    // [END basic_write]
+        // [END basic_write]
 
 
-
-}
+    }

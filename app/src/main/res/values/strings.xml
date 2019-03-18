@@ -93,4 +93,7 @@
 
     <string name="dont_show">don\'t show again</string>
     <string name="skip">skip</string>
+    <string name="enter_your_mobile_number">enter your mobile number</string>
+    <string name="may_i_ask_your_phone_number">May I ask your phone number?</string>
+    <string name="Continue">Continue</string>
 </resources>
