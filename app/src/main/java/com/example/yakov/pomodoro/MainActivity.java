@@ -1,5 +1,6 @@
 package com.example.yakov.pomodoro;
 
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -7,10 +8,14 @@ import android.net.Uri;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.view.MenuItem;
+
 
 import java.util.Locale;
 
@@ -81,6 +86,38 @@ public class MainActivity extends AppCompatActivity {
 
         updateTimer();
 
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId())
+        {
+            case  R.id.statistics:
+                Intent intent1 = new Intent(this,Statistics.class);
+                this.startActivity(intent1);
+                return true;
+
+            case  R.id.about:
+                Intent intent2 = new Intent(this,About.class);
+                this.startActivity(intent2);
+                return true;
+
+            case  R.id.signout:
+                Intent intent3 = new Intent(this,SignOut.class);
+                this.startActivity(intent3);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void startTimer() {

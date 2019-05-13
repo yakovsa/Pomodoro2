@@ -93,4 +93,7 @@
 
     <string name="dont_show">don\'t show again</string>
     <string name="skip">skip</string>
+    <string name="sigh_out">Sigh out</string>
+    <string name="about">About</string>
+    <string name="statistics">Statistics</string>
 </resources>
