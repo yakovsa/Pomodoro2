@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Phon_query"
+    tools:context=".Phone_query"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -26,7 +26,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="391dp"
+        android:layout_height="348dp"
         android:background="@color/colorPrimary"
         android:orientation="vertical"
         android:padding="20dp">
@@ -40,7 +40,7 @@
             android:layout_marginTop="100dp"
             android:text="May I ask your phone number?"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Headline"
-            android:textColor="@color/colorPrimary" />
+            android:textColor="@color/titleColor" />
 
         <EditText
             android:id="@+id/editTextMobile"
@@ -51,7 +51,7 @@
             android:drawablePadding="10dp"
             android:hint="enter your mobile number"
             android:inputType="phone"
-            android:maxLength="13" />
+            android:maxLength="14" />
 
         <Button
             android:id="@+id/buttonContinue"
@@ -70,10 +70,11 @@
     <Button
         android:id="@+id/skip"
         android:layout_width="match_parent"
-        android:layout_height="45dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="0dp"
         android:background="@color/colorPrimaryDark"
         android:text="Skip"
         android:textAllCaps="false"
         android:textColor="#cdd8f1" />
+
 </LinearLayout>

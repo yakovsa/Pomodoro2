@@ -437,8 +437,8 @@ public class Login extends AppCompatActivity implements
 
 
         // [START basic_write]
-        private void writeNewUser (String userId, String name, String num_phone){
-        User user = new User(name, num_phone);
+        private void writeNewUser (String userId, String name, String phone_num){
+        User user = new User(name, phone_num);
 
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         dataBase = FirebaseDatabase.getInstance().getReference();

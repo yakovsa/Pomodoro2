@@ -7,40 +7,46 @@
     android:layout_alignParentBottom="true"
     android:background="#ffffff"
     tools:context=".MainActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingBottom="10dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingTop="10dp">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="163dp">
+        android:layout_height="200dp"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/text_Timer"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:textColor="@color/colorPrimary"
+            android:gravity="center"
+            android:textColor="@color/titleColor"
             android:textSize="80sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            tools:layout_editor_absoluteY="3dp" />
+            tools:layout_editor_absoluteY="3dp"/>
 
         <TextView
-            android:id="@+id/break-work"
-            android:layout_width="wrap_content"
+            android:id="@+id/break_work"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
-            android:layout_marginTop="111dp"
+            android:gravity="center"
             android:text="@string/work_session"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/titleColor"
             android:textSize="18sp" />
 
 
     </LinearLayout>
 
     <LinearLayout
+        android:id="@id/stopbuttonLayout"
         android:layout_width="match_parent"
-        android:layout_height="367dp"
+        android:layout_height="280dp"
         android:gravity="center">
 
         <Button
@@ -57,42 +63,33 @@
             android:visibility="visible" />
     </LinearLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content">
 
 
         <Button
             android:id="@+id/stopbutton"
-            style="@style/Widget.AppCompat.Button"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:layout_marginEnd="224dp"
-            android:layout_marginBottom="208dp"
-            android:layout_gravity="start"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
             android:background="@drawable/sto"
-            android:scaleType="centerCrop"
-            android:textAllCaps="true"
-            android:visibility="visible" />
+            android:scaleType="centerCrop"/>
 
         <Button
             android:id="@+id/nextbutton"
             style="@style/Widget.AppCompat.Button"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:layout_marginEnd="224dp"
-            android:layout_marginBottom="208dp"
+            android:layout_alignBottom="@id/stopbutton"
+            android:layout_alignParentRight="true"
             android:layout_gravity="end"
             android:background="@drawable/paus"
             android:scaleType="centerCrop"
-            android:textAllCaps="true"
-            android:visibility="visible"
-            />
+ />
 
 
-
-
-    </LinearLayout>
+    </RelativeLayout>
 
 </LinearLayout>

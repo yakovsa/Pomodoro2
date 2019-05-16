@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         break_work = findViewById(R.id.break_work);
         startbutton = findViewById(R.id.StartButton);
         nextbutton = findViewById(R.id.nextbutton);
-        nextbutton.setVisibility(View.INVISIBLE);
+//        nextbutton.setVisibility(View.INVISIBLE);
 
         startbutton.setOnClickListener(new View.OnClickListener() {
                @Override

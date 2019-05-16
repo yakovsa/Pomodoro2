@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -16,6 +17,7 @@ import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.database.DatabaseReference;
@@ -29,6 +31,8 @@ public class VerifyPhoneActivity extends AppCompatActivity {
     //These are the objects needed
     //It is the verification id that will be sent to the user
     private String mVerificationId;
+
+    private PhoneAuthProvider.ForceResendingToken mResendToken;
 
     //The edittext to input the code
     private EditText editTextCode;
@@ -78,24 +82,28 @@ public class VerifyPhoneActivity extends AppCompatActivity {
     }
 
     //the method is sending verification code
-    //the country id is concatenated
-    //you can take the country id as user input as well
+
     private void sendVerificationCode(String mobile) {
+        Toast.makeText(getApplicationContext(),mobile,Toast.LENGTH_LONG).show();
+
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
-                "+972" + mobile,
+                mobile,
                 60,
                 TimeUnit.SECONDS,
-                TaskExecutors.MAIN_THREAD,
+                this,
                 mCallbacks);
     }
 
     //the callback to detect the verification status
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
         @Override
-        public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
+        public void onVerificationCompleted(PhoneAuthCredential credential) {
+/*
+            Log.d(null, "onVerificationCompleted:" + credential);
 
+            signInWithPhoneAuthCredential(credential);*/
             //Getting the code sent by SMS
-            String code = phoneAuthCredential.getSmsCode();
+            String code = credential.getSmsCode();
 
             //sometime the code is not detected automatically
             //in this case the code will be null
@@ -112,11 +120,14 @@ public class VerifyPhoneActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onCodeSent(String s, PhoneAuthProvider.ForceResendingToken forceResendingToken) {
-            super.onCodeSent(s, forceResendingToken);
+        public void onCodeSent(String verificationId, PhoneAuthProvider.ForceResendingToken token) {
+
+            Log.d(null, "onCodeSent:" + verificationId);
 
             //storing the verification id that is sent to the user
-            mVerificationId = s;
+            mVerificationId = verificationId;
+            mResendToken = token;
+
         }
     };
 
@@ -138,6 +149,7 @@ public class VerifyPhoneActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             //verification successful we will start the profile activity
+                            FirebaseUser user = task.getResult().getUser();
                             Intent intent = new Intent(VerifyPhoneActivity.this, MainActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);
@@ -165,8 +177,8 @@ public class VerifyPhoneActivity extends AppCompatActivity {
                 });
     }
 
-    private void writeNewUser(String userId, String name, String num_phone) {
-        User user = new User(name, num_phone);
+    private void writeNewUser(String userId, String name, String phone_num) {
+        User user = new User(name, phone_num);
 
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         dataBase = FirebaseDatabase.getInstance().getReference();

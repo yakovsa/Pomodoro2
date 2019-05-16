@@ -6,8 +6,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
-public class Phon_query extends AppCompatActivity {
+public class Phone_query extends AppCompatActivity {
 
 
     private EditText editTextMobile;
@@ -16,7 +17,7 @@ public class Phon_query extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_phon_query);
+        setContentView(R.layout.activity_phone_query);
 
         //if he choose to skip
         skip = findViewById(R.id.skip);
@@ -24,7 +25,7 @@ public class Phon_query extends AppCompatActivity {
         skip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Phon_query.this, MainActivity.class);
+                Intent intent = new Intent(Phone_query.this, MainActivity.class);
                 startActivity(intent);
                 finish();
             }
@@ -43,8 +44,8 @@ public class Phon_query extends AppCompatActivity {
                     editTextMobile.requestFocus();
                     return;
                 }
-
-                Intent intent = new Intent(Phon_query.this, VerifyPhoneActivity.class);
+                Toast.makeText(getApplicationContext(),mobile,Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(Phone_query.this, VerifyPhoneActivity.class);
                 intent.putExtra("mobile", mobile);
                 startActivity(intent);
             }
