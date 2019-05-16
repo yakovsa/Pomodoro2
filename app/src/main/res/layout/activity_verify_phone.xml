@@ -54,7 +54,9 @@
             android:layout_marginTop="10dp"
             android:digits="0123456789"
             android:drawablePadding="10dp"
+            android:textColor="@color/titleColor"
             android:hint="enter verification code"
+            android:textColorHint="@color/titleColor"
             android:inputType="phone"
             android:maxLength="10" />
 
