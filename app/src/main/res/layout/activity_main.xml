@@ -75,10 +75,23 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:background="@drawable/sto"
-            android:scaleType="centerCrop"/>
+            android:scaleType="centerCrop"
+            android:visibility="invisible"
+            android:clickable="false"/>
 
         <Button
             android:id="@+id/nextbutton"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/nex"
+            android:scaleType="centerCrop"
+            android:visibility="invisible"
+            android:clickable="false"/>
+
+        <Button
+            android:id="@+id/pausebutton"
             style="@style/Widget.AppCompat.Button"
             android:layout_width="100dp"
             android:layout_height="100dp"
@@ -87,7 +100,21 @@
             android:layout_gravity="end"
             android:background="@drawable/paus"
             android:scaleType="centerCrop"
- />
+            android:visibility="invisible"
+            android:enabled="false"/>
+
+        <Button
+            android:id="@+id/continuebutton"
+            style="@style/Widget.AppCompat.Button"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_alignBottom="@id/stopbutton"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="end"
+            android:background="@drawable/star"
+            android:scaleType="centerCrop"
+            android:visibility="invisible"
+            android:enabled="false"/>
 
 
     </RelativeLayout>
