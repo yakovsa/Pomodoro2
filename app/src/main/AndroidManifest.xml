@@ -11,26 +11,35 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".MainActivity"
-            android:label="Timer">
+        <service
+            android:name=".noti"
+            android:enabled="true"
+            android:exported="true" />
+        <service
+            android:name=".Notifications"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
 
+        <activity
+            android:name=".MainActivity"
+            android:label="Timer">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
         <activity android:name=".AuthActivity" />
-
-        <activity android:name=".Phone_query" >
+        <activity android:name=".Phone_query">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity android:name=".VerifyPhoneActivity" />
         <activity android:name=".Statistics" />
         <activity android:name=".About" />

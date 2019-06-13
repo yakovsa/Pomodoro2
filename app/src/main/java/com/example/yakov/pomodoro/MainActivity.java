@@ -1,13 +1,20 @@
 package com.example.yakov.pomodoro;
 
+import android.app.AlertDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.CountDownTimer;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
@@ -16,6 +23,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.view.MenuItem;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -24,11 +33,16 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String TAG = "MainActivity";
+
     private static final long START_WORK_IN_MILLIS = 20000;
     private static final long START_SHORT_BREAK_IN_MILLIS = 300000;
     private static final long START_LONG_BREAK_IN_MILLIS = 900000;
@@ -45,6 +59,9 @@ public class MainActivity extends AppCompatActivity {
     private boolean is_braek = false;
     private long m_timeleft_insecons = START_WORK_IN_MILLIS;
 
+
+    private FirebaseUser user;
+    private  DatabaseReference Usres;
     private  DatabaseReference ref_in_sesion;
     private  DatabaseReference ref_syn_time;
     private  DatabaseReference ref_syn;
@@ -66,10 +83,22 @@ public class MainActivity extends AppCompatActivity {
         Continuebutton = findViewById(R.id.continuebutton);
         Stopbutton = findViewById(R.id.stopbutton);
 
+
         ref_syn_time = FirebaseDatabase.getInstance( ).getReference().child("users").child("uri").child("current_time_sesion");
         ref_in_sesion = FirebaseDatabase.getInstance( ).getReference().child("users").child("uri").child("run_status");
         ref_syn = FirebaseDatabase.getInstance( ).getReference().child("users").child("uri");
+        Usres = FirebaseDatabase.getInstance().getReference("Users");
         mAuth = FirebaseAuth.getInstance();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // Create channel to show notifications.
+            String channelId  = getString(R.string.default_notification_channel_id);
+            String channelName = getString(R.string.default_notification_channel_name);
+            NotificationManager notificationManager =
+                    getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(new NotificationChannel(channelId,
+                    channelName, NotificationManager.IMPORTANCE_LOW));
+        }
 
 
         startbutton.setOnClickListener(new View.OnClickListener() {
@@ -123,29 +152,37 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-    /*    nextbutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                if(!is_braek){
-                    if (PomodoroNo < 4) {
-                        shortBreak();
-
-                    } else {
-                        longBreak();
-                    }
-                }
-                else {
-                    WorkSession();
-                    }
-                startbutton.setVisibility(View.VISIBLE);
-//                nextbutton.setVisibility(View.INVISIBLE);
-
-            }
-        });*/
 
         updateTimer();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        final FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "getInstanceId failed", task.getException());
+                            return;
+                        }
+
+                        // Get new Instance ID token
+                        String token = task.getResult().getToken();
+                        Usres.child(currentUser.getUid()).child("Token").setValue(token);
+
+                        // Log and toast
+                        String msg = getString(R.string.msg_token_fmt, token);
+                        Log.d(TAG, msg);
+                        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        if (getIntent().getExtras() != null) {
+            for (String key : getIntent().getExtras().keySet()) {
+                Object value = getIntent().getExtras().get(key);
+                Log.d(TAG, "Key: " + key + " Value: " + value);
+            }
+        }
 
     }
     @Override
@@ -172,15 +209,52 @@ public class MainActivity extends AppCompatActivity {
                 return true;
 
             case  R.id.signout:
-                Intent intent3 = new Intent(this,SignOut.class);
-                this.startActivity(intent3);
+                showAlertDialog();
                 return true;
 
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
+//========================================================================================================
+//                                    Dialog to SignOut
+//========================================================================================================
+    public void showAlertDialog()
+    {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
 
+        alertDialog.setTitle("confirm Sign out");
+
+        alertDialog.setMessage("Are you sure you want to Sign out?");
+
+        alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                SignOut();
+            }
+        });
+
+        alertDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+        alertDialog.show();
+
+    }
+//                                          SignOut the User
+    private void SignOut()
+    {
+        DatabaseReference dr_user = Usres.child("+972535305754");
+        dr_user.removeValue();
+
+        mAuth.signOut();
+    }
+//==================================================================================================
+//                                       manage the timer
+//==================================================================================================
     private void startTimer() {
         countDownTimer_timer = new CountDownTimer(m_timeleft_insecons, 1000) {
             @Override
@@ -267,8 +341,6 @@ public class MainActivity extends AppCompatActivity {
     {
         Stopbutton.setEnabled(false);
         Stopbutton.setVisibility(View.INVISIBLE);
-//        nextbutton.setVisibility(View.VISIBLE);
-//        nextbutton.setEnabled(true);
         Pausebutton.setEnabled(false);
         Pausebutton.setVisibility(View.INVISIBLE);
         startbutton.setVisibility(View.VISIBLE);
@@ -300,13 +372,6 @@ public class MainActivity extends AppCompatActivity {
     }catch (Exception e){
         e.printStackTrace();
     }
-       /* try {
-            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
-            r.play();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
     }
 
     private void writeTimeStart(String userId) {
@@ -318,9 +383,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void syn_start(String userId) {
-        FirebaseUser currentUser = mAuth.getCurrentUser( );
+        FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
-            syn("uri");
+            //syn("uri");
         }
     }
 
@@ -330,14 +395,14 @@ public class MainActivity extends AppCompatActivity {
         ref_syn.addChildEventListener(new ChildEventListener( ) {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
-                //   Log.d(TAG, "onChildAdded:" + dataSnapshot.getKey( ));
+                   Log.d(TAG, "onChildAdded:" + dataSnapshot.getKey( ));
 
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
-                //   Log.d(TAG, "onChildAdded:" + dataSnapshot.getKey( ));
-                if (dataSnapshot.getKey( ).equals("run_status")) {
+                   Log.d(TAG, "onChildChanged:" + dataSnapshot.getKey( ));
+                if (dataSnapshot.getKey().equals("run_status")) {
                     status_sesion = (boolean) dataSnapshot.getValue( );
                     if (!status_sesion) {
                         if (countDownTimer_timer != null) {
@@ -346,7 +411,7 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                 }
-                if (dataSnapshot.getKey( ).equals("current_time_sesion")) {
+                if (dataSnapshot.getKey().equals("current_time_sesion")) {
                     if (status_sesion) {
                         long start = dataSnapshot.getValue(Long.class);
                         long now = System.currentTimeMillis( );
@@ -364,26 +429,27 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                //Log.d(TAG, "onChildRemoved:" + dataSnapshot.getKey());
-
-                //   Log.d(TAG, "onChildAdded:" + dataSnapshot.getKey( ));
+                Log.d(TAG, "onChildRemoved:" + dataSnapshot.getKey());
 
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                //Log.w(TAG, "postComments:onCancelled", databaseError.toException());
-                // Toast.makeText(mContext, "Failed to load comments.", Toast.LENGTH_SHORT).show();
+                Log.w(TAG, "postComments:onCancelled", databaseError.toException());
+                 //Toast.makeText(mContext, "Failed to load comments.", Toast.LENGTH_SHORT).show();
 
             }
 
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
-                // Log.d(TAG, "onChildMoved:" + dataSnapshot.getKey( ));
+                 Log.d(TAG, "onChildMoved:" + dataSnapshot.getKey( ));
 
             }
         });
 
     }
+
+    //----------------------------------------------------------------------------------------------------------------
+
 
 }

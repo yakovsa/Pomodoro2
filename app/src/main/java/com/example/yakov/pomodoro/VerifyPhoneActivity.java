@@ -7,6 +7,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -32,6 +33,9 @@ public class VerifyPhoneActivity extends AppCompatActivity {
     //It is the verification id that will be sent to the user
     private String mVerificationId;
 
+    private String mobile;
+
+
     private PhoneAuthProvider.ForceResendingToken mResendToken;
 
     //The edittext to input the code
@@ -40,26 +44,39 @@ public class VerifyPhoneActivity extends AppCompatActivity {
     //firebase auth object
     private FirebaseAuth mAuth;
 
+    private FirebaseUser user;
+
+    private String userID;
+
     //to write to database
-    private FirebaseDatabase Users;
+    //private FirebaseDatabase Users;
     private FirebaseDatabase userSesion;
     private DatabaseReference dataBase;
     private DatabaseReference ref;
+    private DatabaseReference Users;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_verify_phone);
-
         //initializing objects
         mAuth = FirebaseAuth.getInstance();
+
+        mobile = getIntent().getStringExtra("mobile");
         editTextCode = findViewById(R.id.editTextCode);
+
+        Users = FirebaseDatabase.getInstance().getReference("Users");
+
+
+
 
         //getting mobile number from the previous activity
         //and sending the verification code to the number
-        Intent intent = getIntent();
-        String mobile = intent.getStringExtra("mobile");
+
         sendVerificationCode(mobile);
+
+
+       //  writeNewUser(mobile);
 
 
         //if the automatic sms detection did not work, user can also enter the code manually
@@ -79,12 +96,23 @@ public class VerifyPhoneActivity extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.buttonResend).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resendVerificationCode(mobile, mResendToken);
+            }
+        });
+
     }
+
+
+
+
 
     //the method is sending verification code
 
     private void sendVerificationCode(String mobile) {
-        Toast.makeText(getApplicationContext(),mobile,Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(),mobile,Toast.LENGTH_LONG).show();
 
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
                 mobile,
@@ -94,8 +122,20 @@ public class VerifyPhoneActivity extends AppCompatActivity {
                 mCallbacks);
     }
 
+    private void resendVerificationCode(String mobile,
+                                        PhoneAuthProvider.ForceResendingToken token) {
+        PhoneAuthProvider.getInstance().verifyPhoneNumber(
+                mobile,        // Phone number to verify
+                60,                 // Timeout duration
+                TimeUnit.SECONDS,   // Unit of timeout
+                this,               // Activity (for callback binding)
+                mCallbacks,         // OnVerificationStateChangedCallbacks
+                token);             // ForceResendingToken from callbacks
+    }
+
     //the callback to detect the verification status
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+
         @Override
         public void onVerificationCompleted(PhoneAuthCredential credential) {
 /*
@@ -113,6 +153,7 @@ public class VerifyPhoneActivity extends AppCompatActivity {
                 //verifying the code
                 verifyVerificationCode(code);
             }
+            signInWithPhoneAuthCredential(credential);
         }
         @Override
         public void onVerificationFailed(FirebaseException e) {
@@ -122,6 +163,7 @@ public class VerifyPhoneActivity extends AppCompatActivity {
         @Override
         public void onCodeSent(String verificationId, PhoneAuthProvider.ForceResendingToken token) {
 
+            super.onCodeSent(verificationId,token);
             Log.d(null, "onCodeSent:" + verificationId);
 
             //storing the verification id that is sent to the user
@@ -134,11 +176,10 @@ public class VerifyPhoneActivity extends AppCompatActivity {
     private void verifyVerificationCode(String code) {
         //creating the credential
         PhoneAuthCredential credential = PhoneAuthProvider.getCredential(mVerificationId, code);
-        Intent intent = getIntent();
-        String mobile = intent.getStringExtra("mobile");
+
         //signing the user
         signInWithPhoneAuthCredential(credential);
-        writeNewUser("u","u",mobile);
+
 
     }
 
@@ -150,6 +191,8 @@ public class VerifyPhoneActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             //verification successful we will start the profile activity
                             FirebaseUser user = task.getResult().getUser();
+
+                            writeNewUser(user.getUid() ,mobile);
                             Intent intent = new Intent(VerifyPhoneActivity.this, MainActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);
@@ -162,27 +205,42 @@ public class VerifyPhoneActivity extends AppCompatActivity {
 
                             if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                                 message = "Invalid code entered...";
+                                editTextCode.setText(message);
                             }
 
-                            Snackbar snackbar = Snackbar.make(findViewById(R.id.parent), message, Snackbar.LENGTH_LONG);
-                            snackbar.setAction("Dismiss", new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-
-                                }
-                            });
-                            snackbar.show();
+//                            Snackbar snackbar = Snackbar.make(findViewById(R.id.parent), message, Snackbar.LENGTH_LONG);
+//                            snackbar.setAction("Dismiss", new View.OnClickListener() {
+//                                @Override
+//                                public void onClick(View v) {
+//
+//                                }
+//                            });
+//                            snackbar.show();
                         }
                     }
                 });
     }
 
-    private void writeNewUser(String userId, String name, String phone_num) {
-        User user = new User(name, phone_num);
+//    private void writeNewUser(String userId, String name, String phone_num) {
+//        User user = new User(name, phone_num);
+//
+//        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+//        dataBase = FirebaseDatabase.getInstance().getReference();
+//
+//        dataBase.child("users").child(userId).setValue(user);
+//    }
 
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-        dataBase = FirebaseDatabase.getInstance().getReference();
+    private void writeNewUser(String userid ,String phone_num) {
 
-        dataBase.child("users").child(userId).setValue(user);
+          //String id = Users.push().getKey();
+          User user = new User(userid, phone_num);
+          Users.child(userid).setValue(user);
+
+//        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+//        dataBase = FirebaseDatabase.getInstance().getReference();
+//
+//        dataBase.child("users").child(userId).setValue(user);
     }
+
+
 }

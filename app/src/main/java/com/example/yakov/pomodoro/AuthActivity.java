@@ -443,7 +443,7 @@ public class AuthActivity extends AppCompatActivity implements
     private void writeNewUser(String userId, String name, String phone_num) {
         User user = new User(name, phone_num);
 
-        FirebaseDatabase.getInstance( ).setPersistenceEnabled(true);
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         dataBase = FirebaseDatabase.getInstance( ).getReference();
 
         dataBase.child("users").child(userId).setValue(user);

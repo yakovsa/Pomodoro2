@@ -38,7 +38,7 @@
             android:layout_centerHorizontal="true"
             android:layout_gravity="center"
             android:layout_marginTop="100dp"
-            android:text="May I ask your phone number?"
+            android:text="@string/may_i_ask"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Headline"
             android:textColor="@color/titleColor" />
 

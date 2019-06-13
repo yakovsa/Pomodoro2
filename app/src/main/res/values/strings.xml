@@ -96,4 +96,11 @@
     <string name="sigh_out">Sigh out</string>
     <string name="about">About</string>
     <string name="statistics">Statistics</string>
+
+
+    <string name="default_notification_channel_id">fcm_default_channel</string>
+    <string name="fcm_message">FCM message</string>
+    <string name="msg_token_fmt">InstanceID Token: %s</string>
+    <string name="default_notification_channel_name">weather</string>
+    <string name="may_i_ask">May I ask your phone number (include the country or region code)?</string>
 </resources>
