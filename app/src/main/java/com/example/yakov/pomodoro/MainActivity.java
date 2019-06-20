@@ -1,8 +1,12 @@
 package com.example.yakov.pomodoro;
 
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.app.AlertDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.MediaPlayer;
@@ -12,6 +16,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -60,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
     private long m_timeleft_insecons = START_WORK_IN_MILLIS;
 
 
-    private FirebaseUser user;
+    private  FirebaseUser user;
     private  DatabaseReference Usres;
     private  DatabaseReference ref_in_sesion;
     private  DatabaseReference ref_syn_time;
@@ -104,13 +109,16 @@ public class MainActivity extends AppCompatActivity {
         startbutton.setOnClickListener(new View.OnClickListener() {
                @Override
                public void onClick(View v) {
-                   writeTimeStart("uri");
+
+                   //send();
+                   //writeTimeStart(mAuth.getUid());
                    if(!is_braek)
                    {
                        WorkSession();
 
                    }
                    startTimer();
+                   update_ui2();
 
 
                }
@@ -155,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         updateTimer();
+
         final FirebaseUser currentUser = mAuth.getCurrentUser();
 
         FirebaseInstanceId.getInstance().getInstanceId()
@@ -168,7 +177,11 @@ public class MainActivity extends AppCompatActivity {
 
                         // Get new Instance ID token
                         String token = task.getResult().getToken();
-                        Usres.child(currentUser.getUid()).child("Token").setValue(token);
+//                        if(!Usres.child(currentUser.getUid()).child("Token").equals(token))
+//                        {
+//
+//                        }
+                        //Usres.child(currentUser.getUid()).child("Token").setValue(token);
 
                         // Log and toast
                         String msg = getString(R.string.msg_token_fmt, token);
@@ -282,7 +295,7 @@ public class MainActivity extends AppCompatActivity {
                 ringtone();
                 }
         }.start();
-        update_ui2();
+
 
     }
 
@@ -312,7 +325,7 @@ public class MainActivity extends AppCompatActivity {
         PomodoroNo++;
         updateTimer();
         break_work.setText("Work session");
-        update_ui2();
+        update_ui1();
 
 
     }
@@ -372,13 +385,25 @@ public class MainActivity extends AppCompatActivity {
     }catch (Exception e){
         e.printStackTrace();
     }
+
+        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+// Vibrate for 500 milliseconds
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            //deprecated in API 26
+            v.vibrate(500);
+        }
     }
 
     private void writeTimeStart(String userId) {
 
         long currentTime =  System.currentTimeMillis();
-        ref_syn_time.setValue(currentTime);
-        ref_in_sesion.setValue(true);
+        Usres.child(userId).child("current_time_sesion").setValue(currentTime);
+        Usres.child(userId).child("run_status").setValue(true);
+
+//        ref_syn_time.setValue(currentTime);
+//        ref_in_sesion.setValue(true);
 
     }
 
@@ -447,9 +472,27 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+
     }
+//    private void send()
+//    {
+//        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+//                .setSmallIcon(R.drawable.tomato)
+//                .setContentTitle("pomodoro")
+//                .setContentText("Long break");
+//
+//        Intent notificationIntent = new Intent(this, MainActivity.class);
+//        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+//        builder.setContentIntent(contentIntent);
+//
+//        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+//        manager.notify(0, builder.build());
+//    }
 
     //----------------------------------------------------------------------------------------------------------------
+
+
 
 
 }

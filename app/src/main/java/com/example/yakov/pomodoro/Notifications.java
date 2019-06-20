@@ -11,12 +11,17 @@ import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 public class Notifications extends FirebaseMessagingService {
 
     private static final String TAG = "FCM Service";
+
+    private DatabaseReference refer;
+
 
 
     /**
@@ -60,10 +65,13 @@ public class Notifications extends FirebaseMessagingService {
 //            }
 
         }
-
+        refer = FirebaseDatabase.getInstance().getReference("Users");
         // Check if message contains a notification payload.
         if (remoteMessage.getNotification() != null) {
             Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
+//            if (remoteMessage.getNotification().getBody().equals("long break"))
+//                refer.child("kuku").setValue(8);
+
         }
 
         // Also if you intend on generating your own notifications as a result of a received FCM
